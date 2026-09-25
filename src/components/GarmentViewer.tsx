@@ -11,6 +11,8 @@ const GARMENTS: Array<{ id: GarmentId; name: string; category: string; color: st
   { id: "puffer", name: "Nuptse Puffer", category: "The North Face", color: "Black", note: "700-fill silhouette" },
 ];
 
+const DEFAULT_GARMENT = GARMENTS[0] as (typeof GARMENTS)[number];
+
 function StudioScene({ garment }: { garment: GarmentId }) {
   return (
     <>
@@ -19,7 +21,9 @@ function StudioScene({ garment }: { garment: GarmentId }) {
       <ambientLight intensity={0.65} />
       <directionalLight position={[4, 6, 5]} intensity={2.2} castShadow shadow-mapSize-width={2048} shadow-mapSize-height={2048} />
       <spotLight position={[-4, 5, 3]} intensity={45} angle={0.55} penumbra={0.85} color="#eff5ff" />
-      <GarmentModel garment={garment} />
+      <group scale={0.78} position={[0, -0.05, 0]}>
+        <GarmentModel garment={garment} />
+      </group>
       <ContactShadows position={[0, -2.7, 0]} opacity={0.42} scale={8} blur={2.6} far={5} color="#363636" />
       <mesh rotation-x={-Math.PI / 2} position={[0, -2.82, 0]} receiveShadow>
         <circleGeometry args={[8, 96]} />
@@ -61,7 +65,7 @@ function GarmentSelector({ selected, onSelect }: { selected: GarmentId; onSelect
 export function GarmentViewer() {
   const [selected, setSelected] = useState<GarmentId>("tee");
   const currentIndex = GARMENTS.findIndex((item) => item.id === selected);
-  const current = GARMENTS[currentIndex] ?? GARMENTS[0];
+  const current = GARMENTS[currentIndex] ?? DEFAULT_GARMENT;
   const move = (direction: number) => {
     const next = (currentIndex + direction + GARMENTS.length) % GARMENTS.length;
     const garment = GARMENTS[next];
@@ -80,7 +84,7 @@ export function GarmentViewer() {
       </header>
 
       <section className="viewer-stage" aria-label={`${current.name} 3D viewer`}>
-        <Canvas shadows dpr={[1, 1.75]} camera={{ position: [0, 0.2, 7.2], fov: 40 }} gl={{ antialias: true }}>
+        <Canvas shadows dpr={[1, 1.75]} camera={{ position: [0, 0.15, 8.6], fov: 43 }} gl={{ antialias: true }}>
           <StudioScene garment={selected} />
         </Canvas>
         <div className="viewer-instruction"><Rotate3D size={16} /> Drag to inspect · Pinch to zoom</div>
